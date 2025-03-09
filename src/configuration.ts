@@ -1,4 +1,4 @@
-import { existsSync } from "fs";
+import { exists, existsSync } from "fs";
 import { serviceDirectorySetting } from "./settings";
 import { join } from "path";
 import { homedir } from "os";
@@ -21,9 +21,16 @@ export function locateServiceDirectoryVirtualEnvDir(fileSystem: IFileSystem, wor
 
   const venvPath = (dir: string, venvDir: string) => join(dir, ".opentips", venvDir);
 
+  const venvPlainPath = (dir: string, venvDir: string) => join(dir, venvDir);
+
   let foundDir = VIRTUALENV_DIRS.find((dir) => existsSync(venvPath(workspaceFolder, dir)));
   if ( foundDir ) {
     return venvPath(workspaceFolder, foundDir);
+  }
+
+  foundDir = VIRTUALENV_DIRS.find((dir) => existsSync(venvPlainPath(workspaceFolder, dir)));
+  if ( foundDir ) {
+    return venvPlainPath(workspaceFolder, foundDir);
   }
 
   foundDir = VIRTUALENV_DIRS.find((dir) => existsSync(venvPath(fileSystem.getHomeDir(), dir)));
